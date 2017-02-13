@@ -29,11 +29,7 @@ object Toy {
   def groupCycle[R : _toy](xs: List[String]): Eff[R, List[String]] =
     xs.traverse(cycle[R])
 
-  /**
-    * NEW
-    *
-    * How can it be implemented without exposing Future to the whole stack
-    */
+  /** NEW */
   def parGroupCycle[R : _toy : _Future](xs: List[String]): Eff[R, List[String]] = {
     def futureCycle(x: String): Eff[R, String] =
       futureAttempt[R, String](futureDelay[R, Eff[R, String]](cycle(x)).flatten)
@@ -43,6 +39,12 @@ object Toy {
         ))
 
     Eff.traverseA(xs)(futureCycle)
+  }
+
+    /** How can it be implemented without exposing Future to the whole stack */
+  def parGroupCycle2[R : _toy](xs: List[String]): Eff[R, List[String]] = {
+    val x = parGroupCycle
+    ???
   }
 }
  

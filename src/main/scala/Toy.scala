@@ -33,6 +33,10 @@ object Toy {
   def groupCycle[R : _toy](xs: List[String]): Eff[R, List[String]] =
     xs.traverse(cycle[R])
 
+  /** Use the Eff applicative traverse. */
+  def groupCycleA[R : _toy](xs: List[String]): Eff[R, List[String]] =
+    Eff.traverseA(xs)(cycle[R])
+
   /** NEW */
   def parGroupCycle[R : _toy : _Future](xs: List[String]): Eff[R, List[String]] = {
     def futureCycle(x: String): Eff[R, String] =
@@ -58,4 +62,3 @@ object Toy {
     Await.result(Future.traverse(xs)(futureCycle).map(Eff.sequenceA(_)), 1 minute)
   }
 }
- 

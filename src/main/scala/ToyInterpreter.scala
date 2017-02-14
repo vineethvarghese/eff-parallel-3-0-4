@@ -16,8 +16,8 @@ object ToyInterpreter {
         case Getting(k) => gets[U, Map[String, String], Option[String]](m => m.get(k))
         case Setting(k, v) => modify[U, Map[String, String]](m => m + ((k, v)))
         case Doing(v) => {
-          Thread.sleep(1000)
-          println(v)
+          pure[U, Unit](Thread.sleep(5000)) >>
+          pure[U, Unit](println(v)) >>
           pure("OK")
         }
       }

@@ -27,7 +27,7 @@ object Toy {
 
   def cycle[R  : _toy](x: String): Eff[R, String] = for {
     v <- get(x)
-    s <- doing(v.getOrElse("N/A"))
+    s <- doing(v.getOrElse(s"$x: N/A"))
   } yield s
 
   def groupCycle[R : _toy](xs: List[String]): Eff[R, List[String]] =

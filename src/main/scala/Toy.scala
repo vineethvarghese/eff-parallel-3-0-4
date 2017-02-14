@@ -1,3 +1,7 @@
+import scala.concurrent.{Await, ExecutionContext, Future, Promise}
+import scala.util.{Failure, Success}
+import scala.concurrent.duration._
+
 import cats.implicits._
 
 import org.atnos.eff.{Eff, |=}
@@ -41,10 +45,17 @@ object Toy {
     Eff.traverseA(xs)(futureCycle)
   }
 
-    /** How can it be implemented without exposing Future to the whole stack */
-  def parGroupCycle2[R : _toy](xs: List[String]): Eff[R, List[String]] = {
-    val x = parGroupCycle
-    ???
+  def parGroupCycle2[R : _toy](xs: List[String])(implicit ec: ExecutionContext): Eff[R, List[String]] = {
+    def futureCycle(x: String): Future[Eff[R, String]] = {
+      val prom = Promise[Eff[R, String]]
+      Future(cycle(x)).onComplete {
+        case Success(a) => prom.success(a)
+        case Failure(e) => prom.success(Eff.pure(s"Cycle failed: ${e.getMessage}"))
+      }
+      prom.future
+    }
+
+    Await.result(Future.traverse(xs)(futureCycle).map(Eff.sequenceA(_)), 1 minute)
   }
 }
  

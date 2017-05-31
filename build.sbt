@@ -1,11 +1,15 @@
-name := "eff-parallel-example"
+uniform.project12("eff-parallel-3-0-4", "au.com.cba.zbi.effparallel", "zbi")
 
-scalaVersion := "2.11.8"
+uniformDependencySettings
 
-libraryDependencies += "org.atnos" %% "eff" % "3.0.0"
+strictDependencySettings
 
-// to write types like Reader[String, ?]
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0")
+uniformAssemblySettings
 
-// to get types like Reader[String, ?] (with more than one type parameter) correctly inferred
-addCompilerPlugin("com.milessabin" % "si2712fix-plugin_2.11.8" % "1.2.0")
+uniform.ghsettings
+
+updateOptions := updateOptions.value.withCachedResolution(true)
+
+libraryDependencies += "org.atnos" %% "eff" % "3.0.4"
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
